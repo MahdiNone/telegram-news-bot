@@ -1,30 +1,72 @@
 from config import *
 from rss import *
 from database import *
-from gemini_api import *
 from telegram_api import *
+from gemini_api import *
+from logger import *
+
+count=0
 
 for feed in RSS_FEEDS:
 
+    log(feed)
+
     news=get_news(feed)
 
-    for n in news:
+    for item in news:
 
-        if is_sent(n["link"]):
+        if count>=MAX_POSTS:
+
+            quit()
+
+        if is_sent(item["link"]):
+
             continue
 
-        text=n["title"]+"\n\n"+n["summary"]
+        source=item["text"]
 
-        final=rewrite(text)
+        if len(source)<200:
 
-        if n["image"]:
+            source=item["summary"]
 
-            send_photo(n["image"],final)
+        if len(source)<50:
 
-        else:
+            source=item["title"]
 
-            send(final)
+        try:
 
-        add(n["link"])
+            final=rewrite(source)
 
-        break
+        except Exception as e:
+
+            log(e)
+
+            continue
+
+        try:
+
+            if item["image"]:
+
+                send_photo(
+
+                    item["image"],
+
+                    final
+
+                )
+
+            else:
+
+                send(final)
+
+        except Exception as e:
+
+            log(e)
+
+            continue
+
+        add(item["link"])
+
+        count+=1
+
+        log("sent")
