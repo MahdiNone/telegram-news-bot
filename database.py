@@ -1,26 +1,42 @@
-import json
 import hashlib
+import json
 
 FILE="sent.json"
 
 def load():
+
     try:
-        with open(FILE,"r") as f:
+
+        with open(FILE,"r",encoding="utf8") as f:
+
             return json.load(f)
+
     except:
+
         return []
 
 def save(data):
-    with open(FILE,"w") as f:
-        json.dump(data,f)
 
-def is_sent(url):
-    h=hashlib.md5(url.encode()).hexdigest()
-    data=load()
-    return h in data
+    with open(FILE,"w",encoding="utf8") as f:
 
-def add(url):
-    h=hashlib.md5(url.encode()).hexdigest()
+        json.dump(data,f,ensure_ascii=False)
+
+def md5(text):
+
+    return hashlib.md5(
+        text.encode()
+    ).hexdigest()
+
+def is_sent(link):
+
     data=load()
-    data.append(h)
+
+    return md5(link) in data
+
+def add(link):
+
+    data=load()
+
+    data.append(md5(link))
+
     save(data)
