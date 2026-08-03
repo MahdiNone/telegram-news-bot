@@ -12,7 +12,7 @@ def send(text):
 
             "chat_id":CHANNEL_ID,
 
-            "text":text,
+            "text": text[:4000]
 
             "parse_mode":"HTML"
 
@@ -34,7 +34,7 @@ def send_photo(photo,caption):
 
             "photo":photo,
 
-            "caption":caption
+            "caption": caption[:1024]
 
         },
 
