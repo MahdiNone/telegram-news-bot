@@ -1,24 +1,48 @@
-name: Telegram News Bot
+name: Telegram News
 
 on:
-  schedule:
-    - cron: "*/15 * * * *"
   workflow_dispatch:
 
+  schedule:
+    - cron: "*/15 * * * *"
+
+permissions:
+  contents: write
+
 jobs:
-  run:
+
+  bot:
+
     runs-on: ubuntu-latest
 
     steps:
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
+
         with:
           python-version: "3.11"
 
       - run: pip install -r requirements.txt
 
-      - run: python main.py
+      - name: Run Bot
+
         env:
+
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+
           CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+
+          GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
+
+        run: python main.py
+
+      - name: Save Database
+
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add sent.json
+          git commit -m "update database" || echo "nothing"
+          git push
