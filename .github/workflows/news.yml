@@ -1,17 +1,19 @@
-name: Telegram News
+name: Telegram News Bot
 
 on:
+
   workflow_dispatch:
 
   schedule:
-    - cron: "*/15 * * * *"
+
+    - cron: "*/20 * * * *"
 
 permissions:
   contents: write
 
 jobs:
 
-  bot:
+  run:
 
     runs-on: ubuntu-latest
 
@@ -22,6 +24,7 @@ jobs:
       - uses: actions/setup-python@v5
 
         with:
+
           python-version: "3.11"
 
       - run: pip install -r requirements.txt
@@ -38,11 +41,16 @@ jobs:
 
         run: python main.py
 
-      - name: Save Database
+      - name: Commit sent.json
 
         run: |
+
           git config user.name github-actions
+
           git config user.email github-actions@github.com
+
           git add sent.json
-          git commit -m "update database" || echo "nothing"
+
+          git commit -m "update" || echo "nothing"
+
           git push
